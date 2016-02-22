@@ -1,0 +1,15 @@
+<template name="FriendsList">
+		<div class="row">
+			<h4>Friends:</h4>
+		</div>
+		{{#each friends}}
+			<div class="row">
+				<p>
+					<a href="/users/{{id}}"><span>{{name}}</span> - <span>{{id}}</span></a>
+					{{#if canEdit}}
+					<button class="btn btn-warning btn-xs remove">Remove</button>
+					{{/if}}
+				</p>
+			</div>
+		{{/each}}
+</template>

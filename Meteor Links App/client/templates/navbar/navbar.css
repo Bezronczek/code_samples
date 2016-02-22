@@ -1,0 +1,11 @@
+.navbar input {
+  width: auto;
+  max-width: 200px;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-left: 0;
+  margin-right: 0;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  display: inline-block;
+}

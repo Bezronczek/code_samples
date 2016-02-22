@@ -1,0 +1,59 @@
+<template name="AddOwnLink">
+
+<!--AddLink Row-->
+
+<div class="row">
+
+    <form id="addLinkForm">
+
+       <div class="form-group">
+          <div class="col-lg-7 col-xs-12">
+             <input type="text" name="text" class="form-control"
+             placeholder="Add new link" />
+         </div>
+
+         <div class="col-lg-2 col-xs-7">
+             <select name="friendSelect" id="friendSelect" class="form-control">
+                {{#each friendList}}
+                    <option value="{{id}}">{{name}}</option>
+                {{/each}}
+             </select>
+         </div>
+
+         <div class="col-lg-2 col-xs-5">
+             <select class="form-control" name="categoriesSelect"
+                id="categoriesSelect">
+                 {{#each categoryList}}
+                     <option value="{{this}}">{{this}}</option>
+                 {{/each}}
+             </select>
+         </div>
+
+         <div class="col-lg-1 pull-right">
+             <button type="submit" class="btn btn-primary">Add Link</button>
+         </div>
+       </div>
+    </form>
+</div>
+
+<!--Error Frame-->
+<div class="row hidden" id="addLinkErrorFrame">
+    <div class="alert alert-danger" role="alert">
+      <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+      <span class="sr-only">Error:</span>
+      Must be a valid URL
+      <span class="glyphicon glyphicon-remove pull-right"></span>
+    </div>
+</div>
+
+<!--Success Frame-->
+<div class="row hidden" id="addLinkSuccessFrame">
+    <div class="alert alert-success" role="alert">
+        <span class="glyphicon glyphicon-ok"></span>
+        <span class="sr-only">Success!</span>
+        Your link has been sent to {{linkSentTo}}.
+        <span class="glyphicon glyphicon-remove pull-right"></span>
+    </div>
+</div>
+
+</template>

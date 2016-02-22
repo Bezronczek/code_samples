@@ -1,0 +1,30 @@
+<template name="LinksList">
+   {{#each linksList}}
+      {{> LinksLitsItem}}
+   {{/each}}
+</template>
+
+<template name="LinksLitsItem">
+  <div class="list-group-item row">
+
+          <div class="col-lg-2 col-sm-6">
+            <p>{{author}}</p>
+          </div>
+
+          <div class="col-lg-7 col-sm-6">
+            <a href="//{{targetUrl}}" target="_blank" class="link">{{targetUrl}}</a>
+
+            <span class="label label-primary pull-right">{{category}}</span>
+          </div>
+
+          <div class="col-lg-3 col-sm-12 pull-right">
+            <button class="btn btn-danger delete-link">Delete</button>
+
+            {{#unless archived}}
+              <button class="btn btn-warning archive-link">Archive</button>
+            {{else}}
+              <button class="btn btn-warning archive-link">Restore</button>
+            {{/unless}}
+          </div>
+      </div>
+</template>

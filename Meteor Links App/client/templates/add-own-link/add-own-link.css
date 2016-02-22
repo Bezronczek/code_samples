@@ -1,0 +1,32 @@
+/*Move error frame a little bit lower for better visual experience*/
+/*
+#addLinkErrorFrame {
+    margin-top : 10px;
+}
+*/
+
+@media (min-width: 768px) {
+	#addLinkForm > div {
+		margin-top: 25px
+	}
+}
+
+@media (max-width: 768px) {
+	#addLinkForm > div > * {
+		padding-top: 2.5px;
+		padding-bottom: 2.5px;
+	}
+
+	#addLinkForm {
+		margin-top: -50px;
+	}
+}
+
+#addLinkForm {
+    margin-bottom: 10px;
+}
+
+#addLinkSuccessFrame, #addLinkErrorFrame {
+	margin-top: 25px;
+}
+

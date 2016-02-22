@@ -1,0 +1,38 @@
+<template name="profileBar">
+    <!--   Login widget-->
+    <div class="row" id="loginWidget">
+        {{#if currentUser}}
+            <div class="col-md-1 col-sm-1 col-xs-2">
+                <img class="img img-responsive img-circle" src="{{profilePic}}" alt="">
+            </div>
+        {{/if}}
+    </div>
+</template>
+
+<template name="linksView">
+    <!--    Content for logged users only-->
+    {{#if currentUser}}
+
+<!--AddOwnLink.html-->
+        <div class="container-fluid" id="addOwnLink">
+            {{> AddOwnLink}}
+        </div>
+
+<!--CategoriesFilter.html-->
+        <div class="container-fluid" id="categoriesFilter">
+            {{> CategoriesFilter}}
+        </div>
+
+<!--Link.html-->
+        <div class="container-fluid" id="linksContainer">
+            {{> LinksList}}
+        </div>
+    {{else}}
+        <h1>Ahuhu</h1>
+        <h2>Please login using your Google Account</h2>
+        <p>Currently we do not support any other login method</p>
+    {{/if}}
+
+</template>
+
+

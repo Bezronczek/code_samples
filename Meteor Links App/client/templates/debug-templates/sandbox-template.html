@@ -1,0 +1,10 @@
+<template name="SandboxTemplate">
+  <input type="text" id="userSearch">
+  <div id="searchResult">
+    <ul>
+      {{#each searchResult}}
+        <li><a href="/users/{{_id}}">{{name}}</a></li>
+      {{/each}}
+    </ul>
+  </div>
+</template>
