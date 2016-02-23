@@ -43,26 +43,6 @@ app.on('ready', () => {
 // IPC handlers
 ///////////////////////////////////////////////
 
-ipc.on('extractor_create-new-config', (event, url) => {
-
-  // init configCreator and export it to global
-  configurator = require('./js/ConfigCreator.js');
-  global.config = configurator;
-
-  Browser.visit(url, function (error, browser) {
-    // this will give us some really ugly errors we need to handle in later versions
-    if(error) {
-      mainWindowContents.send('extractor_consoleWarn', error.toString());
-    }
-    createExtractorWindow(
-      configurator.prepareHTML(
-        browser.html()
-      )
-    );
-    configurator.setHostname(browser.document.location.hostname);
-  });
-});
-
 // send back success info to renderer process
 // TODO PLACEHOLDER
 ipc.on('scraper_sendSuccess', event => {
