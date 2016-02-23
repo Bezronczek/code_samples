@@ -13,5 +13,3 @@ Crawler.js module contains Crawler class used in order to get links from selecte
 ##main
 
 main.js is application main process
-
-### I agree to use included code samples during recrutation process only. Publishing any part of the code is strictly prohibited without author's permission.
