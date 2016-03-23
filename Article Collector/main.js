@@ -1,29 +1,29 @@
-// Author Artur Strzepka 2016
 /* globals require, process*/
 
 'use strict';
 
 // electron modules
-const app = require('app');
-const BrowserWindow = require('browser-window');
-const ipc = require('ipc-main');
-const Browser = require('zombie');
+const {app, BrowserWindow, ipcMain} = require('electron');
 let screen = null; // assign value after app is ready
-
-//require('crash-reporter').start();
-
-let configurator = null;
+// import helper functions
+const {
+  initFiles,
+  runQueue,
+  prepareScraperOptions,
+  prepareCrawlerOptions,
+  getDestinationFile,
+  updateConfigurationFile
+} = require('./js/utils');
 
 // vars
 let mainWindow = null;
-let extractorWizardWindow = null;
 let mainWindowContents = null;
 
 // export some globals
 global.mainWindow = mainWindowContents;
 
 // app events
-app.on('window-all-closed', function () {
+app.on('window-all-closed', () => {
   if(process.platform != 'darwin') {
     app.quit();
   }
@@ -31,11 +31,8 @@ app.on('window-all-closed', function () {
 
 app.on('ready', () => {
   screen = require('screen');
-  // TODO perform check on tmp and config directories
-  // if they don't exists, create both to avoid errors
-  // this should be done by separate function, which should check this every time
-  // user tries to write some data. The same should go for reading files.
-  initFiles();
+  initFiles(); // check for critical config files
+  updateConfigurationFile();
   createMainWindow();
 });
 
@@ -43,34 +40,33 @@ app.on('ready', () => {
 // IPC handlers
 ///////////////////////////////////////////////
 
-// send back success info to renderer process
-// TODO PLACEHOLDER
-ipc.on('scraper_sendSuccess', event => {
-  event.sender.send('scraper_success');
-});
-
-// send back error info to renderer process
-// TODO PLACEHOLDER
-ipc.on('scraper_sendError', event => {
-  event.sender.send('scraper_error', "Jest chujowo");
-});
-
-ipc.on('scraper-extract-content', (event, url, file) => {
+// run scraper on passed url array
+ipcMain.on('scraper-extract-content', (event, url) => {
 
   if(url === '') {
-    mainWindowContents.send('extractor_consoleWarn', "Please enter a valid URL");
+    mainWindowContents.send('output-frame-message', "Please enter a valid URL");
     return;
   }
-  let arr = url.split('\n');
-  mainWindow.send('scraper-task-started', arr.length);
-  arr.forEach(link => {
-    let Scraper = require(__dirname + '/js/Scraper.js');
-    new Scraper().scrapeToFile(link, file, 'multimedia.txt');
-  });
+  const scrapeToFile = require(__dirname + '/js/Scraper.js');
+  const file = getDestinationFile();
+  const {filename} = file;
+  mainWindow.send('file-set-articles-path', file);
+  const data = url.split('\n').map(url => prepareScraperOptions(url, filename, 'multimedia.txt'));
+
+  mainWindow.send('scraper-task-started', data.length);
+  runQueue(scrapeToFile, data);
 });
 
-ipc.on('crawler-start', (event, url, filename) => {
-  require('./js/Crawler.js').crawl(url, filename);
+// run crawler on provided link
+ipcMain.on('crawler-start', (event, urls, filename) => {
+  if(urls === '') {
+    mainWindowContents.send('output-frame-message', "Please enter a valid URL");
+    return;
+  }
+  const crawler = require(__dirname + '/js/Crawler.js');
+  const data = urls.split('\n').map(url => prepareCrawlerOptions(url, filename));
+
+  runQueue(crawler, data);
 });
 
 ////////////////////////////////////////
@@ -89,57 +85,15 @@ function createMainWindow() {
     minWidth: 960,
     minHeight: 450,
     title: "Article Collector",
-    autoHideMenuBar: true
+    autoHideMenuBar: true,
+    frame: false
   };
 
   mainWindow = new BrowserWindow(options);
   global.mainWindow = mainWindow;
   mainWindow.loadURL('file://' + __dirname + '/html/index.html');
+  // mainWindow.setMenu(null);
   mainWindowContents = mainWindow.webContents;
 //  mainWindowContents.openDevTools();
-
   mainWindow.on('closed', () => { mainWindow = null; mainWindowContents = null; });
-}
-
-function createExtractorWindow(path) {
-  let options = {
-    height: screen.getPrimaryDisplay().workAreaSize.height * 0.8,
-    width: screen.getPrimaryDisplay().workAreaSize.width * 0.7,
-    x: mainWindow.x - 10,
-    y: mainWindow.y - 10,
-    title: "Configuration Wizard",
-    autoHideMenuBar: true,
-    webPreferences: {
-      webSecurity: false // hope this won't make things ugly
-    }
-  };
-
-  extractorWizardWindow = new BrowserWindow(options);
-  extractorWizardWindow.webContents.openDevTools();
-  // extractorWizardWindow.loadURL('data:text/html,' + encodeURIComponent(html));
-  extractorWizardWindow.loadURL(path);
-
-  extractorWizardWindow.on('closed', () => {
-    mainWindowContents.send('clear-error-frame');
-    configurator.cleanup();
-    mainWindowContents.send('reload-fields');
-    extractorWizardWindow = null;
-  });
-
-}
-
-function initFiles(){
-  let fs = require('fs');
-  fs.access('./config/config.json', fs.R_OK | fs.W_OK, err => {
-    if(err) {
-      fs.access('./config', fs.R_OK | fs.W_OK, err => {
-        if(err) {
-          fs.mkdir('./config');
-          fs.writeFileSync('./config/config.json', JSON.stringify({}, null, '\t'));
-        } else {
-          fs.writeFileSync('./config/config.json', JSON.stringify({}, null, '\t'));
-        }
-      });
-    }
-  });
 }
