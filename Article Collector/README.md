@@ -4,12 +4,16 @@ Code samples from Article Collector project. Three main files with program logic
 
 ##Scraper
 
-Scraper.js module contains Scraper class used in order to retrieve article data from selected URL.
+Scraper.js module contains Scraper functions used in order to retrieve article data from selected URL.
 
 ##Crawler
 
-Crawler.js module contains Crawler class used in order to get links from selected site according to set rules.
+Crawler.js module contains Crawler functions used in order to get links from selected site according to set rules.
 
 ##main
 
 main.js is application main process
+
+##utils.js
+
+Functions used in main.js
